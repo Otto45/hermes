@@ -1,4 +1,4 @@
-package types
+package jobmanager
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ import (
 
 // JobManager contains the job queue and provides methods to queue and run jobs
 type JobManager struct {
-	jobQueue *[constants.DefaultJobQueueSize]*job
+	jobQueue *[constants.DefaultJobQueueSize]*job // TODO: Replace with circular queue implementation
 	mut      sync.Mutex
 }
 
@@ -24,6 +24,8 @@ func (manager *JobManager) Init() {
 
 // Run infinitely loops to check for jobs on the job queue, and synchronously runs each job found
 func (manager *JobManager) Run() {
+	// TODO: Check if Init() was called, and error if not
+
 	for {
 		var nextJob *job
 		manager.mut.Lock()
@@ -35,12 +37,13 @@ func (manager *JobManager) Run() {
 			continue
 		}
 
-		log.Printf("Running job written in %s", nextJob.Language)
+		log.Printf("Running job written in %s\n", nextJob.Language)
 
+		// TODO: Remove placeholder for simulating a job being ran
 		seconds, _ := time.ParseDuration("10s")
-		time.Sleep(seconds) // TODO: Placeholder for simulating a job being ran
+		time.Sleep(seconds)
 
-		log.Printf("Job complete.")
+		log.Printf("Job complete.\n")
 
 		// TODO: Unzip code temporarily stored on disk, and move to input folder used for mounting to containers
 		// TODO: Get container containing an appropriate environment for the specified job's language
@@ -49,8 +52,10 @@ func (manager *JobManager) Run() {
 	}
 }
 
-// ProcessHTTPRequest provides a route handler func for a mux that can process a job request and queue the job
+// ProcessHTTPRequest provides a mux route handler to process and queue job requests
 func (manager *JobManager) ProcessHTTPRequest(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check if Init() was called, and error if not
+
 	if contentTypeHeader := r.Header[constants.ContentTypeHeaderName]; contentTypeHeader == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set(constants.ContentTypeHeaderName, constants.ContentTypeApplicationJSON)

@@ -4,13 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"hermes/types"
+	"hermes/jobmanager"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	jobManager := new(types.JobManager)
+	jobManager := new(jobmanager.JobManager)
 	jobManager.Init()
 
 	// Launches infinite goroutine to concurrently check for and run jobs placed on the queue

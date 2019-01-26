@@ -1,6 +1,6 @@
 package util
 
-// SliceContainsString searches slice of strings slice for string str
+// SliceContainsString searches a string slice for a given string
 func SliceContainsString(slice []string, str string) bool {
 	for _, s := range slice {
 		if s == str {
