@@ -13,13 +13,13 @@ import (
 
 // JobManager contains the job queue and provides methods to queue and run jobs
 type JobManager struct {
-	jobQueue *[constants.DefaultJobQueueSize]*job // TODO: Replace with circular queue implementation
+	jobQueue *jobQueue
 	mut      sync.Mutex
 }
 
 // Init must be called before using an instance of JobManager to initialize internal fields
 func (manager *JobManager) Init() {
-	manager.jobQueue = new([constants.DefaultJobQueueSize]*job)
+	manager.jobQueue = newJobQueue()
 }
 
 // Run infinitely loops to check for jobs on the job queue, and synchronously runs each job found
@@ -29,8 +29,7 @@ func (manager *JobManager) Run() {
 	for {
 		var nextJob *job
 		manager.mut.Lock()
-		nextJob = manager.jobQueue[0]
-		manager.jobQueue[0] = nil
+		nextJob = manager.jobQueue.dequeue()
 		manager.mut.Unlock()
 
 		if nextJob == nil {
@@ -84,7 +83,7 @@ func (manager *JobManager) ProcessHTTPRequest(w http.ResponseWriter, r *http.Req
 	// TODO: Save zipped up source code from request body to temporary location on disk and update job object
 
 	manager.mut.Lock()
-	manager.jobQueue[0] = &data
+	manager.jobQueue.queue(&data)
 	manager.mut.Unlock()
 
 	log.Printf("Job queued successfully!\n")
