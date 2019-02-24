@@ -10,8 +10,7 @@ import (
 )
 
 func main() {
-	jobManager := new(jobmanager.JobManager)
-	jobManager.Init()
+	jobManager := jobmanager.NewManager()
 
 	// Launches infinite goroutine to concurrently check for and run jobs placed on the queue
 	go jobManager.Run()

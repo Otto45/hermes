@@ -17,9 +17,9 @@ type JobManager struct {
 	mut      sync.Mutex
 }
 
-// Init must be called before using an instance of JobManager to initialize internal fields
-func (manager *JobManager) Init() {
-	manager.jobQueue = newJobQueue()
+// NewManager returns a new instance of JobManager with an initialized job queue
+func NewManager() *JobManager {
+	return &JobManager{jobQueue: newJobQueue()}
 }
 
 // Run infinitely loops to check for jobs on the job queue, and synchronously runs each job found
