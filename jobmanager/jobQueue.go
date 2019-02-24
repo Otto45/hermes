@@ -40,9 +40,24 @@ func (jq *jobQueue) dequeue() *job {
 	jq.queuedJobCount--
 	jq.head = jq.head%len(jq.jobs) + 1
 
-	if ratio := float32(jq.queuedJobCount / jq.queueSize); ratio <= float32(0.25) {
+	if ratio := float32(jq.queuedJobCount) / float32(jq.queueSize); ratio <= 0.25 {
 		// TODO: Shrink queue
 	}
 
 	return nextJob
+}
+
+func (jq *jobQueue) grow() {
+	newQueueSize := jq.queueSize << 1
+	newJobQueue := make([]*job, newQueueSize)
+	copy(newJobQueue, jq.jobs)
+	jq.tail = jq.queueSize + 1
+
+	// Need to preserve queue order after resizing slice and adjusting tail pointer
+	if jq.head > 1 {
+		for i := 0; i < jq.head; i++ {
+			job := newJobQueue[i]
+
+		}
+	}
 }
